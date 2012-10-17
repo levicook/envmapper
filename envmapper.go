@@ -1,25 +1,18 @@
 package envmapper
 
-import "testing"
+import "strings"
 
-func Test_MapEnv(t *testing.T) {
-	e := EnvMap{
-		"SHELL": "/bin/bash",
-		"TERM":  "screen-256color",
-	}
+type Map map[string]string
 
-	o := MapEnv([]string{
-		"SHELL=/bin/bash",
-		"TERM=screen-256color",
-	})
-
-	if len(o) != len(e) {
-		t.Fatalf("%v != %v ", len(o), len(e))
-	}
-
-	for k, ev := range e {
-		if ov, ok := o[k]; !ok || ov != ev {
-			t.Fatalf("%v != %v", ev, ov)
+func New(env []string) Map {
+	m := make(Map, cap(env))
+	for _, s := range env {
+		sp := strings.Split(s, "=")
+		if len(sp) == 2 {
+			k := sp[0]
+			v := sp[1]
+			m[k] = v
 		}
 	}
+	return m
 }
